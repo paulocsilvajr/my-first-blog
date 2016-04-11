@@ -1,0 +1,117 @@
+# baseado em:
+# http://tutorial.djangogirls.org/pt
+
+# Obs: atom é um editor livre usado nesse projeto, usado na criação de arquivos
+
+# Instalar
+    sudo apt-get install python3.4
+    sudo apt-get install python-virtualenv
+
+# Criar projeto
+    virtualenv --python=python3.4 myvenv
+
+# Iniciar virtualenv
+    source myvenv/bin/activate
+
+# Instalar Django dentro do virtualenv(myvenv)
+    pip install django==1.8.5
+
+# Iniciando projeto
+    django-admin startproject mysite .
+
+# Editar mysite/settings.py
+    # atom: editor
+    atom mysite/settings.py
+
+# Modificar
+    TIME_ZONE = 'America/Sao_Paulo'
+    DATABASES = {dados para conectar no BD escolhido,
+                 ou manter para usar padrão}
+
+    # Acrescentar
+        # depois de
+            STATIC_URL = '/static/'
+        # o comando seguinte
+            STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# Criar BD(quando usando padrão: sqlite3)
+    python manage.py migrate
+
+# Iniciando o servidor web
+    python manage.py runserver
+    # CTRL+C para finalizar
+
+# Criar um aplicação
+    python manage.py startapp blog
+# Adicionar o app blog no settings.py
+    INSTALLED_APPS = (
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'blog',
+    )
+
+# Criar modelo
+    # abrir arquivo blog/models.py, apagar tudo e incluir:
+    from django.db import models
+    from django.utils import timezone
+
+    class Post(models.Model):
+        author = models.ForeignKey('auth.User')
+        title = models.CharField(max_length=200)
+        text = models.TextField()
+        created_date = models.DateTimeField(
+                default=timezone.now)
+        published_date = models.DateTimeField(
+                blank=True, null=True)
+
+        def publish(self):
+            self.published_date = timezone.now()
+            self.save()
+
+        def __str__(self):
+            return self.title
+
+# Adcionar mudanças no django
+    python manage.py makemigrations blog
+    python manage.py migrate blog
+
+# Abrir e substituir conteudo de blog/admin.py
+    from django.contrib import admin
+    from .models import Post
+
+    admin.site.register(Post)
+
+# rodar servidor e entrar em:
+    python manage.py runserver
+    http://127.0.0.1:8000/admin/
+
+# parar servidor e criar superusuario para acessar admin
+    python manage.py createsuperuser
+    # informar usuario, email e senha(masterkey)
+
+# rodar servidor e logar em http://127.0.0.1:8000/admin/
+# adicionar post(botão +)
+
+# IMPLANTAÇÃO via GitHub
+    # instalação
+    sudo apt-get install git
+    git init
+    git config user.name "Paulo C Silva Jr"
+    git config user.email pauluscave@gmail.com
+    # criar arquivo .gitignore
+    atom .gitignore
+        # acrestantar:
+        *.pyc
+        __pycache__
+        myvenv
+        db.sqlite3
+        .DS_Store
+
+    # monitorar arquivos
+    gitstatus
+
+    #
