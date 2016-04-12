@@ -232,3 +232,80 @@
     git status
     git commit -m "Changed the HTML for the site."
     git push
+
+# Atualizando o site no PythonAnywhere
+    $ cd ~/my-first-blog
+    $ source myvenv/bin/activate
+    (myvenv)$ git pull
+    [...]
+    (myvenv)$ python manage.py collectstatic
+    [...]
+    # DashBoard->web->reload
+
+# Shell do Django
+    python manage.py shell
+        # no console
+        from blog.models import Post
+        Post.objects.all()
+
+        # criar um objeto Post no banco de dados
+        from django.contrib.auth.models import User
+        User.objects.all()
+        me = User.objects.get(username='paulo')
+        Post.objects.create(author=me, title='Sample title', text='Test')
+        Post.objects.all()
+
+        # filtrar posts
+        Post.objects.filter(author=me)
+        Post.objects.filter(title__contains='title')
+
+        from django.utils import timezone
+        Post.objects.filter(published_date__lte=timezone.now())
+
+        # obter uma instância de um post que querer publicar
+        post = Post.objects.get(id=1)
+        post.publish()
+
+        exit()
+
+        # ordenar objetos
+        Post.objects.order_by('created_date')
+        # ordem inversa
+        Post.objects.order_by('-created_date')
+
+# Abrir blog/views.py para configurar view
+    # adicionar:
+    from .models import Post
+    from django.utils import timezone
+
+    # alterar função post_list
+    def post_list(request):
+    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+    return render(request, 'blog/post_list.html', {'posts': posts})
+
+# Abrir blog/templates/blog/post_list.html
+    # troca conteudo do <body> </body> por
+    <div>
+        <h1><a href="/">Django Girls Blog</a></h1>
+    </div>
+
+    {% for post in posts %}
+        <div>
+            <p>published: {{ post.published_date }}</p>
+            <h1><a href="">{{ post.title }}</a></h1>
+            <p>{{ post.text|linebreaks }}</p>
+        </div>
+    {% endfor %}
+
+# Enviar para GitHub e PythonAnywhere
+    # git
+    $ git status
+    $ git add -A .
+    $ git status
+    $ git commit -m "Added views to create/edit blog post inside the site."
+    $ git push
+
+    # pythonanywhere->bash
+    $ cd my-first-blog
+    $ git pull
+    # DashBoard->web->reload
