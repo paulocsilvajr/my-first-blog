@@ -114,4 +114,121 @@
     # monitorar arquivos
     gitstatus
 
-    #
+    # salvar alterações
+    git add -A
+    git commit -m "Meu primeiro django-app, primeiro envio"
+
+    # cadastrar no GitHub
+    https://github.com/
+    # Criar repositorio
+        my-first-blog
+        # deixar desmarcado: initialise with a README
+        # copiar https
+        # https://github.com/paulocsilvajr/my-first-blog.git
+    # ligar git ao GitHub
+    git remote add origin https://github.com/paulocsilvajr/my-first-blog.git
+    git push -u origin master
+    # informar username e password do GitHub
+
+    # cadastrar pythonanywhere, servidor para o blog
+    www.pythonanywhere.com
+    # iniciar o console "Bash"
+    # no console digitar:
+    git clone https://github.com/paulocsilvajr/my-first-blog.git
+    tree my-first-blog
+
+    # criar um virtualenv no pythonanywhere
+    cd my-first-blog
+    virtualenv --python=python3.4 myvenv
+    source myvenv/bin/activate
+    pip install django whitenoise
+    # colentando arquivos estáticos
+    python manage.py collectstatic
+    # criar BD no pythonanywhere
+    python manage.py migrate
+    python manage.py createsuperuser
+    # em Dashboard na guia Web e vá em Add a new web app
+    paulocsilvajr.pythonanywhere.com # next
+    # escolha manual configuration, python3.4, next
+    # Na seção "Virtualenv", clique no texto vermelho que diz "Enter the path to a virtualenv" e digite:
+    /home/paulocsilvajr/my-first-blog/myvenv/
+
+    # Clique no link "AWSGI configuration file" (na seção "Code" perto do topo da página - -ele vai ser nomeado algo como /var/www/<your-username>_pythonanywhere_com_wsgi.py), e você será levado para um editor.
+
+    # Exclua todo o conteúdo atual e substitua com algo parecido com isto:
+
+    import os
+    import sys
+
+    path = '/home/paulocsilvajr/my-first-blog'
+    if path not in sys.path:
+        sys.path.append(path)
+
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
+
+    from django.core.wsgi import get_wsgi_application
+    from whitenoise.django import DjangoWhiteNoise
+    application = DjangoWhiteNoise(get_wsgi_application())
+
+    # em Dashboard, guia Web, clique em Reload
+    # acesse o endereço
+    http://paulocsilvajr.pythonanywhere.com/
+    http://paulocsilvajr.pythonanywhere.com/admin/
+    # e logue com o usuario e senha(username: paulocsilvajr, pass: masterkey)
+
+# URL
+    # modificar arquivo mysite/urls.py para ficar da seguinte forma:
+    from django.conf.urls import include, url
+    from django.contrib import admin
+
+    urlpatterns = [
+        url(r'^admin/', include(admin.site.urls)),
+        url(r'', include('blog.urls')),
+    ]
+
+    # criar arquivo blog/urls.py com as instruções
+    from django.conf.urls import include, url
+    from . import views
+
+    urlpatterns = [
+        url(r'^$', views.post_list),
+    ]
+
+# views
+    # abrir o arquivo blog/views.py e adcionar:
+    def post_list(request):
+        return render(request, 'blog/post_list.html', {})
+
+# Templates
+    # criar pasta blog/templates, blog/templates/blog
+    # criar arquivo post_list.html vazio
+    # adicinar no arquivo post_list.html:
+    <html>
+        <head>
+            <title>Django Girls blog</title>
+        </head>
+        <body>
+            <div>
+                <h1><a href="">Django Girls Blog</a></h1>
+            </div>
+
+            <div>
+                <p>published: 14.06.2014, 12:14</p>
+                <h2><a href="">My first post</a></h2>
+                <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+            </div>
+
+            <div>
+                <p>published: 14.06.2014, 12:14</p>
+                <h2><a href="">My second post</a></h2>
+                <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut f.</p>
+            </div>
+        </body>
+    </html>
+
+# Reenviando arquivos para GitHub
+    git status
+    git add -A
+    git status
+    git commit -m "Changed the HTML for the site."
+    git push
